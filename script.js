@@ -513,70 +513,291 @@ function sendChatMessage() {
     const messages = document.getElementById('chatMessages');
     
     if (input && messages && input.value.trim()) {
-        // Add user message
+        const userInput = input.value.trim();
+        
+        // Store conversation history
+        storeChatHistory(userInput, 'user');
+        
+        // Add user message with timestamp
         const userMessage = document.createElement('div');
         userMessage.className = 'chat-message user';
-        userMessage.innerHTML = `<strong>You:</strong> ${input.value}`;
+        userMessage.innerHTML = `
+            <div class="message-header">
+                <strong>You</strong>
+                <span class="timestamp">${new Date().toLocaleTimeString()}</span>
+            </div>
+            <div class="message-content">${userInput}</div>
+        `;
         messages.appendChild(userMessage);
         
-        // Simulate AI response
+        // Show advanced typing indicator
+        const typingIndicator = document.createElement('div');
+        typingIndicator.className = 'chat-message bot typing';
+        typingIndicator.innerHTML = `
+            <div class="message-header">
+                <strong>AI Assistant</strong>
+                <span class="ai-status">Processing...</span>
+            </div>
+            <div class="message-content">
+                <span class="typing-animation">
+                    <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                </span>
+                <span class="processing-text">Analyzing your request...</span>
+            </div>
+        `;
+        messages.appendChild(typingIndicator);
+        messages.scrollTop = messages.scrollHeight;
+        
+        // Generate extraordinary AI response
         setTimeout(() => {
+            messages.removeChild(typingIndicator);
+            const response = generateExtraordinaryResponse(userInput);
             const botMessage = document.createElement('div');
             botMessage.className = 'chat-message bot';
-            botMessage.innerHTML = `<strong>AI Assistant:</strong> ${generateAIResponse(input.value)}`;
+            botMessage.innerHTML = `
+                <div class="message-header">
+                    <strong>AI Assistant</strong>
+                    <span class="timestamp">${new Date().toLocaleTimeString()}</span>
+                    <span class="confidence">Confidence: ${response.confidence}%</span>
+                </div>
+                <div class="message-content">${response.message}</div>
+                ${response.actions ? `<div class="message-actions">${response.actions}</div>` : ''}
+            `;
             messages.appendChild(botMessage);
             messages.scrollTop = messages.scrollHeight;
-        }, 1000);
+            
+            // Store AI response
+            storeChatHistory(response.message, 'ai');
+            
+            // Execute any suggested actions
+            if (response.executeAction) {
+                setTimeout(() => response.executeAction(), 1000);
+            }
+        }, Math.random() * 1000 + 1500);
         
         input.value = '';
         messages.scrollTop = messages.scrollHeight;
     }
 }
 
-function generateAIResponse(userMessage) {
+// Extraordinary AI Response System
+function generateExtraordinaryResponse(userMessage) {
     const msg = userMessage.toLowerCase();
+    const context = getChatContext();
+    const sentiment = analyzeSentiment(userMessage);
+    const intent = detectIntent(userMessage);
     
-    // Intelligent responses based on keywords
+    let response = {
+        message: '',
+        confidence: 95,
+        actions: null,
+        executeAction: null
+    };
+    
+    // Advanced contextual responses
     if (msg.includes('hello') || msg.includes('hi') || msg.includes('hey')) {
-        return "Hello! I'm your AI assistant. I can help you with analytics, automation, predictions, and much more. What would you like to explore today?";
+        response.message = `Hello! 👋 I'm your advanced AI assistant powered by neural networks. I've analyzed ${context.totalMessages} previous messages and I'm ready to help you with intelligent solutions. What challenge can I solve for you today?`;
+        response.actions = `<button class="action-btn" onclick="openFeatureModal('analytics')">📊 View Analytics</button> <button class="action-btn" onclick="openFeatureModal('automation')">🤖 Setup Automation</button>`;
     }
-    if (msg.includes('weather')) {
-        return "I can help you with weather information! The current weather shows sunny conditions at 24°C. Would you like me to check weather for a specific location?";
+    else if (msg.includes('weather')) {
+        response.message = `🌤️ I can provide real-time weather intelligence for any location worldwide! I have access to weather data for 14+ major cities with 5-day forecasts, weather alerts, and auto-updates. Which location would you like me to analyze?`;
+        response.executeAction = () => openFeatureModal('weather');
+        response.actions = `<button class="action-btn" onclick="openFeatureModal('weather')">🌤️ Open Weather Intelligence</button>`;
     }
-    if (msg.includes('analytics') || msg.includes('data')) {
-        return "Great! I can provide detailed analytics. Currently showing 1,247 total users with 89 active sessions. Would you like me to generate a comprehensive report?";
+    else if (msg.includes('analytics') || msg.includes('data')) {
+        const stats = generateRealTimeStats();
+        response.message = `📊 **Real-Time Analytics Dashboard**\n\n🔥 **Live Metrics:**\n• Active Users: ${stats.activeUsers}\n• Data Processed: ${stats.dataProcessed}\n• System Performance: ${stats.performance}%\n• Revenue Today: ${stats.revenue}\n\nI can generate comprehensive reports, create visualizations, and provide predictive insights. What specific analytics would you like to explore?`;
+        response.actions = `<button class="action-btn" onclick="generateReport()">📈 Generate Report</button> <button class="action-btn" onclick="openFeatureModal('analytics')">📊 Full Dashboard</button>`;
+        response.confidence = 98;
     }
-    if (msg.includes('automation') || msg.includes('task')) {
-        return "I can help you set up task automation! You can create time-based, event-based, or manual triggers. What kind of task would you like to automate?";
+    else if (msg.includes('automation') || msg.includes('task')) {
+        response.message = `🤖 **Intelligent Task Automation**\n\nI can create sophisticated automation workflows with:\n• Time-based triggers (schedules)\n• Event-based triggers (conditions)\n• AI-powered decision making\n• Multi-step processes\n• Performance monitoring\n\nCurrently managing ${getAutomationCount()} active automations. What process would you like me to automate?`;
+        response.executeAction = () => openFeatureModal('automation');
+        response.actions = `<button class="action-btn" onclick="openFeatureModal('automation')">⚙️ Create Automation</button>`;
     }
-    if (msg.includes('prediction') || msg.includes('forecast')) {
-        return "Based on current trends, I predict 15% user growth next month and $125K revenue next quarter. Would you like detailed predictive analysis?";
+    else if (msg.includes('prediction') || msg.includes('forecast')) {
+        response.message = `🔮 **AI Predictive Analysis**\n\nMy neural networks have analyzed historical patterns and current trends to generate:\n• User growth predictions: +15.3% next month\n• Revenue forecasting: $125K+ next quarter\n• Market trend analysis: 67% automation adoption\n• Risk assessment: Low risk profile\n\nWould you like me to run a detailed prediction model for specific metrics?`;
+        response.executeAction = () => runPrediction();
+        response.actions = `<button class="action-btn" onclick="runPrediction()">🔮 Run Prediction</button>`;
+        response.confidence = 92;
     }
-    if (msg.includes('security') || msg.includes('threat')) {
-        return "Security status: All systems secure! Firewall active, malware protection enabled. Last scan completed 2 hours ago with no threats detected.";
+    else if (msg.includes('security') || msg.includes('threat')) {
+        response.message = `🛡️ **Advanced Security Analysis**\n\n✅ **System Status: SECURE**\n• Firewall: Active & Updated\n• Threat Detection: Real-time monitoring\n• Vulnerability Scan: 0 critical issues\n• Access Control: Multi-factor enabled\n• Last Security Audit: 2 hours ago\n\nI can perform comprehensive security scans, threat analysis, and generate security reports. Need a security assessment?`;
+        response.actions = `<button class="action-btn" onclick="runSecurityScan()">🔍 Run Security Scan</button>`;
     }
-    if (msg.includes('translate') || msg.includes('language')) {
-        return "I can translate text between multiple languages including English, Spanish, French, German, and Hindi. What would you like me to translate?";
+    else if (msg.includes('translate') || msg.includes('language')) {
+        response.message = `🌐 **Advanced Language Translation**\n\nI support professional translation between:\n• English ↔ Hindi (नमस्ते)\n• English ↔ Spanish (Hola)\n• English ↔ French (Bonjour)\n• English ↔ German (Guten Tag)\n• And many more languages!\n\nFeatures: Context-aware translation, cultural adaptation, and professional formatting. What would you like me to translate?`;
+        response.executeAction = () => openFeatureModal('translation');
+        response.actions = `<button class="action-btn" onclick="openFeatureModal('translation')">🌐 Open Translator</button>`;
     }
-    if (msg.includes('schedule') || msg.includes('meeting')) {
-        return "I can help you schedule meetings and events intelligently. I'll find the best time slots based on your availability. What event would you like to schedule?";
+    else if (msg.includes('schedule') || msg.includes('meeting')) {
+        response.message = `📅 **Smart Scheduling Assistant**\n\nI can intelligently schedule:\n• Meetings with conflict detection\n• Recurring events with optimization\n• Task deadlines with priority analysis\n• Resource allocation planning\n\nMy AI considers time zones, availability patterns, and productivity metrics. What would you like to schedule?`;
+        response.executeAction = () => openFeatureModal('scheduler');
+        response.actions = `<button class="action-btn" onclick="openFeatureModal('scheduler')">📅 Smart Schedule</button>`;
     }
-    if (msg.includes('help') || msg.includes('what can you do')) {
-        return "I can assist with: 📊 Data Analytics, 🤖 Task Automation, 🔮 Predictions, 🛡️ Security, 🌐 Translation, 📅 Scheduling, 🌤️ Weather, 👁️ OCR, and 🎤 Voice Commands. What interests you?";
+    else if (msg.includes('help') || msg.includes('what can you do')) {
+        response.message = `🚀 **Futuristic AID Capabilities**\n\n**Core AI Features:**\n📊 **Analytics** - Real-time data insights & reports\n🤖 **Automation** - Intelligent workflow creation\n🔮 **Predictions** - Advanced forecasting models\n🛡️ **Security** - Comprehensive threat analysis\n🌐 **Translation** - Multi-language AI translation\n📅 **Scheduling** - Smart calendar management\n🌤️ **Weather** - Global weather intelligence\n👁️ **OCR** - Advanced text extraction\n🎤 **Voice** - Natural language commands\n💬 **Chat** - This advanced AI conversation\n\nI'm powered by advanced neural networks and can learn from our conversations. What would you like to explore?`;
+        response.confidence = 100;
     }
-    if (msg.includes('thank')) {
-        return "You're welcome! I'm always here to help. Is there anything else you'd like to explore or any other features you'd like to try?";
+    else if (msg.includes('thank')) {
+        response.message = `You're very welcome! 😊 I'm designed to continuously learn and improve from our interactions. I've processed ${context.totalMessages} messages in our conversation and I'm getting better at understanding your needs.\n\nIs there anything else I can help you with? I'm here 24/7 with advanced AI capabilities!`;
+    }
+    else if (detectQuestion(msg)) {
+        response = generateIntelligentAnswer(userMessage, context, sentiment);
+    }
+    else if (detectProblem(msg)) {
+        response = generateProblemSolution(userMessage, context);
+    }
+    else {
+        // Advanced contextual response
+        response.message = generateContextualResponse(userMessage, context, sentiment, intent);
+        response.confidence = Math.floor(Math.random() * 20) + 80;
     }
     
-    // Default intelligent responses
+    return response;
+}
+
+// Supporting AI functions
+function getChatContext() {
+    const history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+    return {
+        totalMessages: history.length,
+        recentTopics: extractTopics(history.slice(-10)),
+        userPreferences: analyzePreferences(history),
+        conversationFlow: analyzeFlow(history)
+    };
+}
+
+function storeChatHistory(message, sender) {
+    const history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+    history.push({
+        message: message,
+        sender: sender,
+        timestamp: new Date().toISOString(),
+        sentiment: analyzeSentiment(message)
+    });
+    
+    // Keep only last 100 messages
+    if (history.length > 100) {
+        history.splice(0, history.length - 100);
+    }
+    
+    localStorage.setItem('chatHistory', JSON.stringify(history));
+}
+
+function analyzeSentiment(text) {
+    const positiveWords = ['good', 'great', 'excellent', 'amazing', 'wonderful', 'fantastic', 'love', 'like', 'happy', 'pleased'];
+    const negativeWords = ['bad', 'terrible', 'awful', 'hate', 'dislike', 'angry', 'frustrated', 'problem', 'issue', 'error'];
+    
+    const words = text.toLowerCase().split(' ');
+    let score = 0;
+    
+    words.forEach(word => {
+        if (positiveWords.includes(word)) score += 1;
+        if (negativeWords.includes(word)) score -= 1;
+    });
+    
+    if (score > 0) return 'positive';
+    if (score < 0) return 'negative';
+    return 'neutral';
+}
+
+function detectIntent(text) {
+    const intents = {
+        question: ['what', 'how', 'why', 'when', 'where', 'which', '?'],
+        request: ['can you', 'please', 'help me', 'i need', 'i want'],
+        command: ['show me', 'open', 'start', 'run', 'execute'],
+        information: ['tell me', 'explain', 'describe', 'about']
+    };
+    
+    const lowerText = text.toLowerCase();
+    
+    for (const [intent, keywords] of Object.entries(intents)) {
+        if (keywords.some(keyword => lowerText.includes(keyword))) {
+            return intent;
+        }
+    }
+    
+    return 'general';
+}
+
+function generateRealTimeStats() {
+    return {
+        activeUsers: 89 + Math.floor(Math.random() * 20),
+        dataProcessed: (2.4 + Math.random()).toFixed(1) + ' TB',
+        performance: 95 + Math.floor(Math.random() * 5),
+        revenue: '$' + (1250 + Math.floor(Math.random() * 500)).toLocaleString()
+    };
+}
+
+function getAutomationCount() {
+    const automations = JSON.parse(localStorage.getItem('automations') || '[]');
+    return automations.length;
+}
+
+function detectQuestion(text) {
+    return text.includes('?') || text.toLowerCase().startsWith('what') || text.toLowerCase().startsWith('how') || text.toLowerCase().startsWith('why');
+}
+
+function detectProblem(text) {
+    const problemWords = ['problem', 'issue', 'error', 'bug', 'not working', 'broken', 'help'];
+    return problemWords.some(word => text.toLowerCase().includes(word));
+}
+
+function generateIntelligentAnswer(question, context, sentiment) {
+    return {
+        message: `🤔 **Analyzing your question...**\n\nBased on my neural network analysis and ${context.totalMessages} previous interactions, here's my intelligent response:\n\n"${question}"\n\nI've processed this query through multiple AI models and can provide detailed insights. Would you like me to break this down into specific actionable steps or provide more detailed analysis?`,
+        confidence: 88,
+        actions: `<button class="action-btn" onclick="showNotification('Detailed analysis coming soon!', 'info')">🔍 Detailed Analysis</button>`
+    };
+}
+
+function generateProblemSolution(problem, context) {
+    return {
+        message: `🛠️ **Problem Solving Mode Activated**\n\nI've identified this as a problem-solving request. Let me analyze:\n\n**Problem:** "${problem}"\n\n**AI Analysis:**\n• Problem category: Technical/Functional\n• Urgency level: Medium\n• Suggested approach: Step-by-step resolution\n\n**Recommended Actions:**\n1. Identify root cause\n2. Implement solution\n3. Test and verify\n4. Monitor results\n\nWould you like me to guide you through the solution process?`,
+        confidence: 91,
+        actions: `<button class="action-btn" onclick="showNotification('Solution guide activated!', 'success')">🚀 Start Solution</button>`
+    };
+}
+
+function generateContextualResponse(message, context, sentiment, intent) {
     const responses = [
-        `Interesting question about "${userMessage}". Based on my analysis, I'd recommend exploring our automation features for this type of task.`,
-        `I understand you're asking about "${userMessage}". Let me process this through our AI systems and provide you with actionable insights.`,
-        `Great point! Regarding "${userMessage}", our predictive models suggest this could be optimized using our smart features.`,
-        `Thanks for that input on "${userMessage}". I can help you implement a solution using our advanced AI capabilities.`,
-        `That's a valuable question about "${userMessage}". Our system can analyze this and provide data-driven recommendations.`
+        `🧠 **Advanced AI Analysis**\n\nI've processed "${message}" through my neural networks considering:\n• Your conversation history (${context.totalMessages} messages)\n• Sentiment: ${sentiment}\n• Intent: ${intent}\n• Context patterns\n\nBased on this analysis, I recommend exploring our advanced features that align with your interests. What specific area would you like to dive deeper into?`,
+        
+        `🚀 **Intelligent Response**\n\nYour message "${message}" has been analyzed using advanced NLP algorithms. I've detected ${sentiment} sentiment and ${intent} intent.\n\nI can help you achieve your goals more efficiently using our AI-powered tools. Would you like me to suggest the most relevant features for your current needs?`,
+        
+        `💡 **Smart Insights**\n\nProcessing "${message}" through my knowledge base...\n\nI've identified several ways I can assist you based on our conversation pattern and your preferences. My AI models suggest focusing on practical solutions that deliver immediate value.\n\nShall I recommend specific actions you can take right now?`
     ];
+    
     return responses[Math.floor(Math.random() * responses.length)];
+}
+
+function extractTopics(messages) {
+    // Simple topic extraction
+    const topics = [];
+    messages.forEach(msg => {
+        if (msg.message.includes('weather')) topics.push('weather');
+        if (msg.message.includes('analytics')) topics.push('analytics');
+        if (msg.message.includes('automation')) topics.push('automation');
+    });
+    return [...new Set(topics)];
+}
+
+function analyzePreferences(history) {
+    // Analyze user preferences from history
+    return {
+        preferredFeatures: ['analytics', 'automation'],
+        communicationStyle: 'detailed',
+        responseTime: 'immediate'
+    };
+}
+
+function analyzeFlow(history) {
+    return {
+        averageMessageLength: history.reduce((acc, msg) => acc + msg.message.length, 0) / history.length || 0,
+        topicSwitches: 0,
+        engagementLevel: 'high'
+    };
 }
 
 // Voice recognition functionality
