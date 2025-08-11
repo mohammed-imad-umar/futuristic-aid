@@ -1034,13 +1034,162 @@ function getWeather() {
     const location = document.getElementById('weatherLocation')?.value;
     if (location) {
         showNotification(`Getting weather for ${location}...`, 'info');
+        
+        // Simulate API call with realistic delay
         setTimeout(() => {
-            showNotification('Weather data updated!', 'success');
+            const weatherData = generateWeatherData(location);
+            updateWeatherDisplay(weatherData);
+            showNotification(`Weather updated for ${location}!`, 'success');
         }, 1500);
     } else {
         showNotification('Please enter a location', 'error');
     }
 }
+
+function generateWeatherData(location) {
+    // Realistic weather data based on different cities
+    const weatherDatabase = {
+        'mumbai': { temp: 28, condition: 'Humid', icon: 'fa-cloud-rain', humidity: 85, wind: 15 },
+        'delhi': { temp: 24, condition: 'Sunny', icon: 'fa-sun', humidity: 65, wind: 12 },
+        'bangalore': { temp: 22, condition: 'Pleasant', icon: 'fa-cloud-sun', humidity: 70, wind: 8 },
+        'chennai': { temp: 30, condition: 'Hot', icon: 'fa-sun', humidity: 78, wind: 18 },
+        'kolkata': { temp: 26, condition: 'Cloudy', icon: 'fa-cloud', humidity: 82, wind: 10 },
+        'hyderabad': { temp: 25, condition: 'Clear', icon: 'fa-sun', humidity: 60, wind: 14 },
+        'pune': { temp: 23, condition: 'Pleasant', icon: 'fa-cloud-sun', humidity: 68, wind: 11 },
+        'ahmedabad': { temp: 29, condition: 'Warm', icon: 'fa-sun', humidity: 55, wind: 16 },
+        'london': { temp: 15, condition: 'Rainy', icon: 'fa-cloud-rain', humidity: 90, wind: 20 },
+        'new york': { temp: 18, condition: 'Cloudy', icon: 'fa-cloud', humidity: 75, wind: 22 },
+        'tokyo': { temp: 20, condition: 'Mild', icon: 'fa-cloud-sun', humidity: 72, wind: 13 },
+        'paris': { temp: 16, condition: 'Cool', icon: 'fa-cloud', humidity: 80, wind: 18 },
+        'dubai': { temp: 35, condition: 'Very Hot', icon: 'fa-sun', humidity: 45, wind: 25 },
+        'singapore': { temp: 27, condition: 'Tropical', icon: 'fa-cloud-rain', humidity: 88, wind: 12 }
+    };
+    
+    const locationKey = location.toLowerCase();
+    
+    if (weatherDatabase[locationKey]) {
+        return {
+            location: location,
+            ...weatherDatabase[locationKey],
+            forecast: generateForecast(weatherDatabase[locationKey])
+        };
+    } else {
+        // Generate random realistic weather for unknown locations
+        const conditions = [
+            { condition: 'Sunny', icon: 'fa-sun', tempRange: [20, 35] },
+            { condition: 'Cloudy', icon: 'fa-cloud', tempRange: [15, 25] },
+            { condition: 'Rainy', icon: 'fa-cloud-rain', tempRange: [12, 22] },
+            { condition: 'Pleasant', icon: 'fa-cloud-sun', tempRange: [18, 28] }
+        ];
+        
+        const randomCondition = conditions[Math.floor(Math.random() * conditions.length)];
+        const temp = Math.floor(Math.random() * (randomCondition.tempRange[1] - randomCondition.tempRange[0])) + randomCondition.tempRange[0];
+        
+        return {
+            location: location,
+            temp: temp,
+            condition: randomCondition.condition,
+            icon: randomCondition.icon,
+            humidity: Math.floor(Math.random() * 40) + 50,
+            wind: Math.floor(Math.random() * 20) + 5,
+            forecast: generateForecast({ temp, condition: randomCondition.condition, icon: randomCondition.icon })
+        };
+    }
+}
+
+function generateForecast(baseWeather) {
+    const days = ['Tomorrow', 'Day 2', 'Day 3', 'Day 4', 'Day 5'];
+    const conditions = ['Sunny', 'Cloudy', 'Rainy', 'Pleasant', 'Clear'];
+    const icons = ['fa-sun', 'fa-cloud', 'fa-cloud-rain', 'fa-cloud-sun', 'fa-sun'];
+    
+    return days.map((day, index) => ({
+        day: day,
+        temp: baseWeather.temp + Math.floor(Math.random() * 10 - 5),
+        condition: conditions[Math.floor(Math.random() * conditions.length)],
+        icon: icons[Math.floor(Math.random() * icons.length)]
+    }));
+}
+
+function updateWeatherDisplay(weatherData) {
+    const weatherWidget = document.querySelector('.weather-widget');
+    if (weatherWidget) {
+        weatherWidget.innerHTML = `
+            <div style="display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 20px;">
+                <i class="fas ${weatherData.icon}" style="font-size: 3rem;"></i>
+                <div>
+                    <div class="weather-temp">${weatherData.temp}°C</div>
+                    <div class="weather-desc">${weatherData.condition}</div>
+                </div>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <p><strong>📍 Location:</strong> ${weatherData.location}</p>
+                <p><strong>💧 Humidity:</strong> ${weatherData.humidity}% | <strong>💨 Wind:</strong> ${weatherData.wind} km/h</p>
+                <p><strong>🕐 Updated:</strong> ${new Date().toLocaleTimeString()}</p>
+            </div>
+            <div style="margin-top: 20px;">
+                <h4>📅 5-Day Forecast:</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-top: 15px;">
+                    ${weatherData.forecast.map(day => `
+                        <div style="text-align: center; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                            <div style="font-size: 0.8em; margin-bottom: 5px;">${day.day}</div>
+                            <i class="fas ${day.icon}" style="font-size: 1.5rem; margin: 5px 0;"></i>
+                            <div style="font-weight: bold;">${day.temp}°C</div>
+                            <div style="font-size: 0.8em;">${day.condition}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+    
+    // Also update any weather alerts
+    checkWeatherAlerts(weatherData);
+}
+
+function checkWeatherAlerts(weatherData) {
+    let alertMessage = '';
+    let alertType = 'info';
+    
+    if (weatherData.temp > 35) {
+        alertMessage = `⚠️ Heat Alert: Very high temperature (${weatherData.temp}°C) in ${weatherData.location}. Stay hydrated!`;
+        alertType = 'warning';
+    } else if (weatherData.temp < 5) {
+        alertMessage = `❄️ Cold Alert: Very low temperature (${weatherData.temp}°C) in ${weatherData.location}. Stay warm!`;
+        alertType = 'warning';
+    } else if (weatherData.condition.toLowerCase().includes('rain')) {
+        alertMessage = `🌧️ Rain Alert: Rainy conditions expected in ${weatherData.location}. Carry an umbrella!`;
+        alertType = 'info';
+    } else if (weatherData.wind > 25) {
+        alertMessage = `💨 Wind Alert: Strong winds (${weatherData.wind} km/h) in ${weatherData.location}. Be cautious!`;
+        alertType = 'warning';
+    }
+    
+    if (alertMessage) {
+        setTimeout(() => {
+            showNotification(alertMessage, alertType);
+        }, 2000);
+    }
+}
+
+// Auto-update weather every 5 minutes for the current location
+function startWeatherAutoUpdate() {
+    setInterval(() => {
+        const currentLocation = document.querySelector('.weather-widget p')?.textContent;
+        if (currentLocation && currentLocation.includes('Location:')) {
+            const location = currentLocation.split('Location: ')[1];
+            if (location && location !== 'New Delhi, India') {
+                const weatherData = generateWeatherData(location);
+                updateWeatherDisplay(weatherData);
+                showNotification(`Weather auto-updated for ${location}`, 'info');
+            }
+        }
+    }, 300000); // 5 minutes
+}
+
+// Initialize weather auto-update when the app starts
+document.addEventListener('DOMContentLoaded', function() {
+    startWeatherAutoUpdate();
+});
 
 // Notification system
 function showNotification(message, type = 'info') {
