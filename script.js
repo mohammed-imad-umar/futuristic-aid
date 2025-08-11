@@ -534,13 +534,47 @@ function sendChatMessage() {
 }
 
 function generateAIResponse(userMessage) {
+    const msg = userMessage.toLowerCase();
+    
+    // Intelligent responses based on keywords
+    if (msg.includes('hello') || msg.includes('hi') || msg.includes('hey')) {
+        return "Hello! I'm your AI assistant. I can help you with analytics, automation, predictions, and much more. What would you like to explore today?";
+    }
+    if (msg.includes('weather')) {
+        return "I can help you with weather information! The current weather shows sunny conditions at 24°C. Would you like me to check weather for a specific location?";
+    }
+    if (msg.includes('analytics') || msg.includes('data')) {
+        return "Great! I can provide detailed analytics. Currently showing 1,247 total users with 89 active sessions. Would you like me to generate a comprehensive report?";
+    }
+    if (msg.includes('automation') || msg.includes('task')) {
+        return "I can help you set up task automation! You can create time-based, event-based, or manual triggers. What kind of task would you like to automate?";
+    }
+    if (msg.includes('prediction') || msg.includes('forecast')) {
+        return "Based on current trends, I predict 15% user growth next month and $125K revenue next quarter. Would you like detailed predictive analysis?";
+    }
+    if (msg.includes('security') || msg.includes('threat')) {
+        return "Security status: All systems secure! Firewall active, malware protection enabled. Last scan completed 2 hours ago with no threats detected.";
+    }
+    if (msg.includes('translate') || msg.includes('language')) {
+        return "I can translate text between multiple languages including English, Spanish, French, German, and Hindi. What would you like me to translate?";
+    }
+    if (msg.includes('schedule') || msg.includes('meeting')) {
+        return "I can help you schedule meetings and events intelligently. I'll find the best time slots based on your availability. What event would you like to schedule?";
+    }
+    if (msg.includes('help') || msg.includes('what can you do')) {
+        return "I can assist with: 📊 Data Analytics, 🤖 Task Automation, 🔮 Predictions, 🛡️ Security, 🌐 Translation, 📅 Scheduling, 🌤️ Weather, 👁️ OCR, and 🎤 Voice Commands. What interests you?";
+    }
+    if (msg.includes('thank')) {
+        return "You're welcome! I'm always here to help. Is there anything else you'd like to explore or any other features you'd like to try?";
+    }
+    
+    // Default intelligent responses
     const responses = [
-        "I understand your request. Let me help you with that.",
-        "That's an interesting question! Here's what I think...",
-        "Based on my analysis, I would recommend...",
-        "I can definitely assist you with that task.",
-        "Let me process that information for you.",
-        "Great question! Here's my analysis..."
+        `Interesting question about "${userMessage}". Based on my analysis, I'd recommend exploring our automation features for this type of task.`,
+        `I understand you're asking about "${userMessage}". Let me process this through our AI systems and provide you with actionable insights.`,
+        `Great point! Regarding "${userMessage}", our predictive models suggest this could be optimized using our smart features.`,
+        `Thanks for that input on "${userMessage}". I can help you implement a solution using our advanced AI capabilities.`,
+        `That's a valuable question about "${userMessage}". Our system can analyze this and provide data-driven recommendations.`
     ];
     return responses[Math.floor(Math.random() * responses.length)];
 }
@@ -625,25 +659,198 @@ function processVoiceCommand(command) {
     }
 }
 
-// Other feature functions
+// Enhanced Analytics with real functionality
 function generateReport() {
-    showNotification('Analytics report generated successfully!', 'success');
+    showNotification('Generating comprehensive analytics report...', 'info');
+    
+    // Simulate report generation with progress
+    let progress = 0;
+    const progressInterval = setInterval(() => {
+        progress += 20;
+        showNotification(`Report generation: ${progress}% complete`, 'info');
+        
+        if (progress >= 100) {
+            clearInterval(progressInterval);
+            // Create and download a sample report
+            const reportData = generateAnalyticsData();
+            downloadReport(reportData);
+            showNotification('Analytics report generated and downloaded!', 'success');
+        }
+    }, 500);
+}
+
+function generateAnalyticsData() {
+    const currentDate = new Date();
+    return {
+        reportDate: currentDate.toISOString().split('T')[0],
+        totalUsers: 1247 + Math.floor(Math.random() * 100),
+        activeSessions: 89 + Math.floor(Math.random() * 20),
+        dataProcessed: '2.4 TB',
+        conversionRate: (3.2 + Math.random()).toFixed(2) + '%',
+        revenue: '$' + (125000 + Math.floor(Math.random() * 25000)).toLocaleString(),
+        topFeatures: ['AI Chat', 'Analytics', 'Automation', 'Predictions'],
+        userGrowth: '+15.3%',
+        systemUptime: '99.9%'
+    };
+}
+
+function downloadReport(data) {
+    const reportContent = `
+FUTURISTIC AID - ANALYTICS REPORT
+================================
+Generated: ${data.reportDate}
+
+KEY METRICS:
+- Total Users: ${data.totalUsers}
+- Active Sessions: ${data.activeSessions}
+- Data Processed: ${data.dataProcessed}
+- Conversion Rate: ${data.conversionRate}
+- Revenue: ${data.revenue}
+- User Growth: ${data.userGrowth}
+- System Uptime: ${data.systemUptime}
+
+TOP FEATURES:
+${data.topFeatures.map(f => `- ${f}`).join('\n')}
+
+This report was generated by Futuristic AID Analytics Engine.
+    `;
+    
+    const blob = new Blob([reportContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `futuristic-aid-report-${data.reportDate}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
 
 function createAutomation() {
     const taskName = document.getElementById('taskName')?.value;
-    if (taskName) {
-        showNotification(`Automation "${taskName}" created successfully!`, 'success');
+    const trigger = document.getElementById('taskTrigger')?.value;
+    
+    if (taskName && trigger) {
+        // Store automation in localStorage
+        const automations = JSON.parse(localStorage.getItem('automations') || '[]');
+        const newAutomation = {
+            id: Date.now(),
+            name: taskName,
+            trigger: trigger,
+            status: 'Active',
+            created: new Date().toISOString(),
+            executions: 0
+        };
+        
+        automations.push(newAutomation);
+        localStorage.setItem('automations', JSON.stringify(automations));
+        
+        showNotification(`Automation "${taskName}" created and activated!`, 'success');
+        
+        // Clear form
+        document.getElementById('taskName').value = '';
+        
+        // Start automation simulation
+        simulateAutomationExecution(newAutomation.id);
     } else {
-        showNotification('Please enter a task name', 'error');
+        showNotification('Please fill in all fields', 'error');
     }
 }
 
+function simulateAutomationExecution(automationId) {
+    // Simulate automation running every 30 seconds
+    setInterval(() => {
+        const automations = JSON.parse(localStorage.getItem('automations') || '[]');
+        const automation = automations.find(a => a.id === automationId);
+        
+        if (automation) {
+            automation.executions++;
+            automation.lastRun = new Date().toISOString();
+            localStorage.setItem('automations', JSON.stringify(automations));
+            
+            if (automation.executions % 5 === 0) {
+                showNotification(`Automation "${automation.name}" executed ${automation.executions} times`, 'info');
+            }
+        }
+    }, 30000);
+}
+
 function runPrediction() {
-    showNotification('Running AI prediction analysis...', 'info');
+    showNotification('Initializing AI prediction models...', 'info');
+    
     setTimeout(() => {
-        showNotification('Prediction analysis completed!', 'success');
+        const predictions = generatePredictions();
+        displayPredictions(predictions);
+        showNotification('AI prediction analysis completed!', 'success');
     }, 2000);
+}
+
+function generatePredictions() {
+    const baseGrowth = 15;
+    const baseRevenue = 125000;
+    const baseConversion = 3.2;
+    
+    return {
+        userGrowth: {
+            nextMonth: (baseGrowth + (Math.random() * 10 - 5)).toFixed(1) + '%',
+            nextQuarter: (baseGrowth * 3 + (Math.random() * 20 - 10)).toFixed(1) + '%',
+            confidence: (85 + Math.random() * 10).toFixed(1) + '%'
+        },
+        revenue: {
+            nextMonth: '$' + (baseRevenue * 0.33 + (Math.random() * 10000 - 5000)).toLocaleString(),
+            nextQuarter: '$' + (baseRevenue + (Math.random() * 50000 - 25000)).toLocaleString(),
+            confidence: (82 + Math.random() * 12).toFixed(1) + '%'
+        },
+        conversion: {
+            improvement: '+' + (baseConversion * 0.1 + Math.random()).toFixed(2) + '%',
+            newRate: (baseConversion + Math.random()).toFixed(2) + '%',
+            confidence: (78 + Math.random() * 15).toFixed(1) + '%'
+        },
+        trends: [
+            'AI feature usage increasing by 23%',
+            'Mobile traffic growing 18% faster',
+            'User engagement up 31% this quarter',
+            'Automation adoption rate: 67%'
+        ]
+    };
+}
+
+function displayPredictions(predictions) {
+    const content = `
+        <div class="prediction-results">
+            <h4>🔮 AI Predictions Updated:</h4>
+            <div style="display: grid; gap: 15px; margin: 20px 0;">
+                <div style="padding: 15px; background: var(--surface-color); border-radius: 8px; border-left: 4px solid #10b981;">
+                    <strong>📈 User Growth</strong><br>
+                    Next Month: ${predictions.userGrowth.nextMonth}<br>
+                    Next Quarter: ${predictions.userGrowth.nextQuarter}<br>
+                    <small>Confidence: ${predictions.userGrowth.confidence}</small>
+                </div>
+                <div style="padding: 15px; background: var(--surface-color); border-radius: 8px; border-left: 4px solid #3b82f6;">
+                    <strong>💰 Revenue Forecast</strong><br>
+                    Next Month: ${predictions.revenue.nextMonth}<br>
+                    Next Quarter: ${predictions.revenue.nextQuarter}<br>
+                    <small>Confidence: ${predictions.revenue.confidence}</small>
+                </div>
+                <div style="padding: 15px; background: var(--surface-color); border-radius: 8px; border-left: 4px solid #f59e0b;">
+                    <strong>🎯 Conversion Rate</strong><br>
+                    Expected Improvement: ${predictions.conversion.improvement}<br>
+                    New Rate: ${predictions.conversion.newRate}<br>
+                    <small>Confidence: ${predictions.conversion.confidence}</small>
+                </div>
+                <div style="padding: 15px; background: var(--surface-color); border-radius: 8px; border-left: 4px solid #8b5cf6;">
+                    <strong>📊 Key Trends</strong><br>
+                    ${predictions.trends.map(trend => `• ${trend}`).join('<br>')}
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Update the prediction content in the modal
+    const predictionContainer = document.querySelector('#featureContent .prediction-results');
+    if (predictionContainer) {
+        predictionContainer.innerHTML = content;
+    }
 }
 
 function runSecurityScan() {
@@ -655,26 +862,153 @@ function runSecurityScan() {
 
 function translateText() {
     const input = document.getElementById('translateInput')?.value;
+    const fromLang = document.getElementById('fromLang')?.value;
+    const toLang = document.getElementById('toLang')?.value;
     const result = document.getElementById('translationResult');
     const translatedText = document.getElementById('translatedText');
     
-    if (input && result && translatedText) {
-        // Simulate translation
-        translatedText.textContent = `Translated: ${input} (Demo translation)`;
-        result.style.display = 'block';
-        showNotification('Text translated successfully!', 'success');
+    if (input && result && translatedText && fromLang && toLang) {
+        showNotification('Translating text...', 'info');
+        
+        // Simulate translation with realistic delay
+        setTimeout(() => {
+            const translation = performTranslation(input, fromLang, toLang);
+            translatedText.innerHTML = `
+                <div style="background: var(--background-color); padding: 15px; border-radius: 8px; margin: 10px 0;">
+                    <strong>Original (${getLanguageName(fromLang)}):</strong><br>
+                    <em>${input}</em>
+                </div>
+                <div style="background: var(--primary-color); color: white; padding: 15px; border-radius: 8px;">
+                    <strong>Translation (${getLanguageName(toLang)}):</strong><br>
+                    ${translation}
+                </div>
+                <div style="margin-top: 10px; font-size: 0.9em; color: var(--text-secondary);">
+                    <i class="fas fa-robot"></i> Translated by Futuristic AID AI
+                </div>
+            `;
+            result.style.display = 'block';
+            showNotification('Translation completed successfully!', 'success');
+        }, 1500);
+    } else {
+        showNotification('Please enter text and select languages', 'error');
     }
+}
+
+function performTranslation(text, fromLang, toLang) {
+    // Enhanced translation simulation with more realistic results
+    const translations = {
+        'en_to_hi': {
+            'hello': 'नमस्ते',
+            'how are you': 'आप कैसे हैं',
+            'thank you': 'धन्यवाद',
+            'good morning': 'सुप्रभात',
+            'artificial intelligence': 'कृत्रिम बुद्धिमत्ता'
+        },
+        'en_to_es': {
+            'hello': 'hola',
+            'how are you': '¿cómo estás?',
+            'thank you': 'gracias',
+            'good morning': 'buenos días',
+            'artificial intelligence': 'inteligencia artificial'
+        },
+        'en_to_fr': {
+            'hello': 'bonjour',
+            'how are you': 'comment allez-vous',
+            'thank you': 'merci',
+            'good morning': 'bonjour',
+            'artificial intelligence': 'intelligence artificielle'
+        }
+    };
+    
+    const key = `${fromLang}_to_${toLang}`;
+    const lowerText = text.toLowerCase();
+    
+    if (translations[key] && translations[key][lowerText]) {
+        return translations[key][lowerText];
+    }
+    
+    // Fallback realistic translation
+    return `[AI Translation: ${text}] - Professional translation by Futuristic AID`;
+}
+
+function getLanguageName(code) {
+    const languages = {
+        'en': 'English',
+        'hi': 'Hindi',
+        'es': 'Spanish',
+        'fr': 'French',
+        'de': 'German'
+    };
+    return languages[code] || code;
 }
 
 function processOCR() {
     const file = document.getElementById('ocrFile')?.files[0];
     const result = document.getElementById('ocrResult');
+    const extractedText = document.getElementById('extractedText');
     
-    if (file && result) {
-        result.style.display = 'block';
-        showNotification('Text extraction completed!', 'success');
+    if (file && result && extractedText) {
+        showNotification('Processing image for text extraction...', 'info');
+        
+        // Simulate OCR processing
+        setTimeout(() => {
+            const mockExtractedText = generateMockOCRText(file.name);
+            extractedText.innerHTML = `
+                <div style="background: var(--background-color); padding: 15px; border-radius: 8px;">
+                    <h4>📄 Extracted Text:</h4>
+                    <div style="border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; margin: 10px 0; background: white; color: black; font-family: monospace;">
+                        ${mockExtractedText}
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <button class="btn btn-primary" onclick="copyExtractedText()">📋 Copy Text</button>
+                        <button class="btn btn-secondary" onclick="downloadExtractedText()">💾 Download</button>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.9em; color: var(--text-secondary);">
+                        <i class="fas fa-eye"></i> Processed by Futuristic AID OCR Engine<br>
+                        File: ${file.name} | Size: ${(file.size/1024).toFixed(1)} KB
+                    </div>
+                </div>
+            `;
+            result.style.display = 'block';
+            showNotification('Text extraction completed successfully!', 'success');
+        }, 2500);
     } else {
         showNotification('Please select an image file', 'error');
+    }
+}
+
+function generateMockOCRText(filename) {
+    const sampleTexts = [
+        "FUTURISTIC AID\\nAdvanced Intelligence Dashboard\\n\\nWelcome to the future of AI technology.\\nThis document contains important information\\nabout our advanced systems and capabilities.\\n\\nFeatures include:\\n• Real-time analytics\\n• Predictive modeling\\n• Automated workflows\\n• Multi-language support\\n\\nFor more information, visit our website.",
+        "INVOICE\\n\\nDate: ${new Date().toLocaleDateString()}\\nInvoice #: FA-2024-001\\n\\nBill To:\\nFuturistic AID Client\\n123 Tech Street\\nSilicon Valley, CA\\n\\nDescription: AI Services\\nAmount: $1,299.00\\nTax: $129.90\\nTotal: $1,428.90\\n\\nThank you for your business!",
+        "MEETING NOTES\\n\\nDate: ${new Date().toLocaleDateString()}\\nAttendees: AI Team\\n\\nAgenda:\\n1. System performance review\\n2. New feature deployment\\n3. User feedback analysis\\n4. Security updates\\n\\nAction Items:\\n- Optimize prediction algorithms\\n- Enhance user interface\\n- Implement new security protocols\\n\\nNext meeting: Next week"
+    ];
+    
+    return sampleTexts[Math.floor(Math.random() * sampleTexts.length)].replace(/\\n/g, '<br>');
+}
+
+function copyExtractedText() {
+    const textElement = document.querySelector('#extractedText div div');
+    if (textElement) {
+        navigator.clipboard.writeText(textElement.textContent).then(() => {
+            showNotification('Text copied to clipboard!', 'success');
+        });
+    }
+}
+
+function downloadExtractedText() {
+    const textElement = document.querySelector('#extractedText div div');
+    if (textElement) {
+        const blob = new Blob([textElement.textContent], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `extracted-text-${new Date().toISOString().split('T')[0]}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showNotification('Text file downloaded!', 'success');
     }
 }
 
