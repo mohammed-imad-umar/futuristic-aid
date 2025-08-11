@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futuristic AID - Advanced Intelligence Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-robot"></i>
+                <span>Futuristic AID</span>
+            </div>
+            <div class="nav-actions">
+                <button id="themeToggle" class="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button id="loginBtn" class="btn btn-primary">Login</button>
+                <button id="signupBtn" class="btn btn-secondary">Sign Up</button>
+                <div id="userMenu" class="user-menu hidden">
+                    <span id="userName"></span>
+                    <button id="logoutBtn" class="btn btn-outline">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Welcome to Futuristic AID</h1>
+                <p>Advanced Intelligence Dashboard for the Future</p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">10+</span>
+                        <span class="stat-label">AI Features</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">24/7</span>
+                        <span class="stat-label">Support</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">99.9%</span>
+                        <span class="stat-label">Uptime</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Grid -->
+        <section class="features-section">
+            <div class="container">
+                <h2>AI-Powered Features</h2>
+                <div class="features-grid">
+                    <div class="feature-card" data-feature="chat">
+                        <div class="feature-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h3>AI Chat Assistant</h3>
+                        <p>Intelligent conversational AI for instant support</p>
+                    </div>
+                    <div class="feature-card" data-feature="analytics">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>Data Analytics</h3>
+                        <p>Advanced data visualization and insights</p>
+                    </div>
+                    <div class="feature-card" data-feature="automation">
+                        <div class="feature-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <h3>Task Automation</h3>
+                        <p>Automate repetitive tasks with AI</p>
+                    </div>
+                    <div class="feature-card" data-feature="prediction">
+                        <div class="feature-icon">
+                            <i class="fas fa-crystal-ball"></i>
+                        </div>
+                        <h3>Predictive Analysis</h3>
+                        <p>AI-powered future trend predictions</p>
+                    </div>
+                    <div class="feature-card" data-feature="voice">
+                        <div class="feature-icon">
+                            <i class="fas fa-microphone"></i>
+                        </div>
+                        <h3>Voice Commands</h3>
+                        <p>Control the system with voice recognition</p>
+                    </div>
+                    <div class="feature-card" data-feature="security">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>AI Security</h3>
+                        <p>Advanced threat detection and prevention</p>
+                    </div>
+                    <div class="feature-card" data-feature="translation">
+                        <div class="feature-icon">
+                            <i class="fas fa-language"></i>
+                        </div>
+                        <h3>Language Translation</h3>
+                        <p>Real-time multi-language translation</p>
+                    </div>
+                    <div class="feature-card" data-feature="ocr">
+                        <div class="feature-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <h3>OCR Scanner</h3>
+                        <p>Extract text from images and documents</p>
+                    </div>
+                    <div class="feature-card" data-feature="scheduler">
+                        <div class="feature-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <h3>Smart Scheduler</h3>
+                        <p>AI-powered meeting and task scheduling</p>
+                    </div>
+                    <div class="feature-card" data-feature="weather">
+                        <div class="feature-icon">
+                            <i class="fas fa-cloud-sun"></i>
+                        </div>
+                        <h3>Weather Intelligence</h3>
+                        <p>Advanced weather forecasting and alerts</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Section (Hidden by default) -->
+        <section id="dashboard" class="dashboard hidden">
+            <div class="container">
+                <h2>Your AI Dashboard</h2>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>System Status</h3>
+                        <div class="status-indicator online">
+                            <span class="status-dot"></span>
+                            All Systems Online
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>AI Usage</h3>
+                        <div class="usage-stats">
+                            <div class="usage-item">
+                                <span>Queries Today:</span>
+                                <span class="usage-value">247</span>
+                            </div>
+                            <div class="usage-item">
+                                <span>Processing Time:</span>
+                                <span class="usage-value">0.3s avg</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modals -->
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Login to Futuristic AID</h2>
+                <span class="close" data-modal="loginModal">&times;</span>
+            </div>
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div id="signupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Join Futuristic AID</h2>
+                <span class="close" data-modal="signupModal">&times;</span>
+            </div>
+            <form id="signupForm" class="auth-form">
+                <div class="form-group">
+                    <label for="signupName">Full Name</label>
+                    <input type="text" id="signupName" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupConfirmPassword">Confirm Password</label>
+                    <input type="password" id="signupConfirmPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Sign Up</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Feature Modals -->
+    <div id="featureModal" class="modal">
+        <div class="modal-content feature-modal-content">
+            <div class="modal-header">
+                <h2 id="featureTitle">Feature</h2>
+                <span class="close" data-modal="featureModal">&times;</span>
+            </div>
+            <div id="featureContent" class="feature-content">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Futuristic AID</h3>
+                    <p>Advanced Intelligence Dashboard for the Future</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Features</h4>
+                    <ul>
+                        <li>AI Chat Assistant</li>
+                        <li>Data Analytics</li>
+                        <li>Task Automation</li>
+                        <li>Predictive Analysis</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li>Documentation</li>
+                        <li>API Reference</li>
+                        <li>Community</li>
+                        <li>Contact</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Futuristic AID. Created by <strong>Laharika Reddy</strong></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

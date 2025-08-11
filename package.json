@@ -1,0 +1,40 @@
+{
+  "name": "futuristic-aid",
+  "version": "1.0.0",
+  "description": "Advanced Intelligence Dashboard - A modern AI-powered web application with 10+ functional features",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "npx serve .",
+    "build": "echo 'No build process required for static site'",
+    "deploy": "echo 'Ready for deployment to Netlify, Vercel, or GitHub Pages'"
+  },
+  "keywords": [
+    "ai",
+    "dashboard",
+    "futuristic",
+    "web-app",
+    "javascript",
+    "responsive",
+    "dark-theme",
+    "authentication",
+    "modern-ui"
+  ],
+  "author": "Laharika Reddy",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/username/futuristic-aid.git"
+  },
+  "homepage": "https://futuristic-aid.netlify.app",
+  "devDependencies": {},
+  "dependencies": {},
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
